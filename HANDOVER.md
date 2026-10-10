@@ -3,807 +3,301 @@
 **Repository:** `/home/eska/Coding/nayla-bpar-invitation`  
 **Remote:** `https://github.com/eskaerpe/nayla-bpar-invitation.git`  
 **Branch:** `main`  
-**Handover created:** 10 October 2026 (WIB)  
-**Current code checkpoint before this document:** `a1e2a4c` — `style(invitation): align layout with requested baseline`
+**Updated:** 11 October 2026 (WIB)
+**Current verified checkpoint:** `6745444` — `fix(gate): restore invitation code modal layout`
 
-> This document is the single handover source for the next model. It describes the current implementation, design direction, behavior constraints, validation evidence, risks, and the next safe steps. Do not treat old documentation or Git history as the final visual source of truth when it conflicts with newer owner instructions.
-
----
-
-## 1. Product purpose
-
-This is a private web invitation for **Nayla’s Sweet Seventeen**. It is a Next.js App Router site with:
-
-1. A lightweight invitation-code gate before the main invitation.
-2. A vertically scrolling editorial invitation page.
-3. An RSVP flow with attendance confirmation and one food plus one drink choice for attendees.
-4. Direct client-side submission to a supplied Google Apps Script endpoint.
-5. No custom backend, no database, no `/api` proxy route, and no credential embedded in source.
-
-The intended deployment architecture is:
-
-```text
-Vercel static frontend → supplied Google Apps Script Web App → Google Sheets
-```
+This is the current source of truth for implementation constraints and verified state. Owner-provided visual references override old Git-era design direction if they conflict.
 
 ---
 
-## 2. Owner instructions and non-negotiable constraints
+## 1. Product and architecture
 
-### 2.1 Design authority
+Private web invitation for **Nayla’s Sweet Seventeen**:
 
-- The **owner-provided screenshot is the visual source of truth**. Git commits are rollback checkpoints and rough baselines only.
-- Screenshot reference file:
+1. Invitation-code gate before main content.
+2. Personalized editorial invitation after valid code verification.
+3. RSVP flow: attendance confirmation plus one food and one drink selection for attendees.
+4. Direct client-side submission to a supplied Google Apps Script Web App.
 
-  ```text
-  /home/eska/.hermes/cache/images/img_09ca904feb1a.jpg
-  ```
+Architecture:
 
-- The intended aesthetic is a narrow, vertical, sweet vintage/editorial invitation:
-  - deep chocolate brown;
-  - cream and beige paper surfaces;
-  - muted pale green accent;
-  - large expressive typography;
-  - stationery/paper/tape treatment;
-  - calm whitespace;
-  - personal and warm, not childish;
-  - not a dashboard, SaaS landing page, generic card grid, or template-like feature section.
-- Do not claim “exact”, “pixel-perfect”, or “persis” until a rendered screenshot has been compared against the owner reference.
-- Use no emoji. Use icons from the installed icon library when an icon is actually needed.
+```text
+Vercel static frontend → Google Apps Script Web App → Google Sheets
+```
 
-### 2.2 Working rules
+Non-negotiable architecture constraints:
 
-- Commit every code/design revision immediately after it is validated. This is required so the owner can always roll back.
-- Do not reset, checkout, or delete user artifacts destructively without explicit approval.
-- Do not push or deploy automatically.
-- Do not expose guest code values, private endpoint values, secrets, tokens, passwords, or credentials in messages, screenshots, commits, or public docs.
-
-### 2.3 Functional constraints
-
-- Invitation gate must show before the invitation on a first visit.
-- Invitation code input is uppercase alphanumeric and limited to six characters.
-- The invitation code list is currently frontend-only; it must not be submitted to Apps Script.
-- RSVP must submit **exactly these five fields**:
-
-  ```text
-  nama
-  will_join
-  makanan
-  minuman
-  notes_for_nayla
-  ```
-
-- Food and drink are each single-select.
-- After a successful RSVP submit, the success UI must not expose an edit action.
-- Do not change the Google Apps Script implementation/API contract without owner confirmation.
-- Do not add an API route, server proxy, database, or another backend layer.
+- No custom backend.
+- No database.
+- No Next.js `/api` route or proxy.
+- Do not modify Apps Script without explicit owner confirmation.
+- Never expose or document the production endpoint, credentials, tokens, or guest codes in public handover text.
 
 ---
 
-## 3. Final approved event data
+## 2. Active design direction
 
-Use `content/event.ts` as the code source for event values. Do not hardcode event data inside UI components.
+The current direction is **pink editorial**: feminine, intimate, print-inspired, with deliberate typography and paper-like surfaces. It must not become a generic SaaS/card interface.
 
-```text
-Person: Nayla
-Occasion: Sweet Seventeen
-Date: Saturday, 17 October 2026
-Time: 13.00–16.00 WIB
-Venue: Braci by Matoa Group
-Address: Jl. Sulanjana No. 5, Bandung
-Dress code: Cream or beige
-Activities: Lunch together, Games, And more surprises
-```
+Palette:
 
-### Important content discrepancy
+| Token | Hex | Role |
+|---|---:|---|
+| Peony Pink | `#F2C1CF` | Hero and primary accent |
+| Soft Pink | `#F8DDDD` | Quiet fields and gate background |
+| Cream | `#F4ECE2` | Alternate information surfaces |
+| Ivory | `#F8F5F1` | Main page surface |
+| White | `#FAF9F7` | Cards, inputs, dialog surface |
+| Dark Neutral Ink | `#352C34` | Primary text and closing section |
+| Plum | `#8D526B` | Secondary accent, labels, links |
 
-The screenshot/OCR may show a different time (`15.00–16.00 WIB`) and an inconsistent street spelling. Those are **not approved final data**. The active official data are the values above and in `content/event.ts`.
+Rules:
 
----
+- Do not reintroduce the old dominant chocolate/brown identity.
+- Use `--page-gutter` for stable shared horizontal alignment.
+- Decorations (rings, seals, tape, large numerals) must not obstruct text-safe areas.
+- Gate, invitation, RSVP, and outfit dialog must use one consistent pink/ivory/ink system.
+- Preserve minimum touch target and visible keyboard focus.
 
-## 4. Current repository state
-
-```text
-Repository: /home/eska/Coding/nayla-bpar-invitation
-Branch: main
-Remote: origin → https://github.com/eskaerpe/nayla-bpar-invitation.git
-```
-
-At the time this handover was prepared, the local branch was ahead of `origin/main` by seven application commits and had not been pushed/deployed.
-
-### Recent application checkpoints
-
-```text
-a1e2a4c style(invitation): align layout with requested baseline
-0bd29aa feat(invitation): recreate supplied editorial reference design
-b5c08a7 revert(invitation): restore approved reference layout
-ef42eb5 test(rsvp): isolate endpoint configuration in unit test
-e1409f4 style(invitation): restore restrained editorial visual system
-7d506de refactor(invitation): restore restrained editorial reading flow
-875f01c feat(invitation): add private guest gate and event details
-30d1261 Add RSVP release plan
-fd81c97 Fix RSVP flow and direct Apps Script submission
-cc96662 Refine invitation UI and RSVP integration
-```
-
-### How to interpret those commits
-
-- `30d1261cab20788ce21ffff11eca48d4753ad9af` was requested by the owner as a **temporary layout baseline** for the latest cleanup, not as a complete final visual target.
-- `0bd29aa` was a screenshot-oriented recreation attempt.
-- `a1e2a4c` is the latest UI alignment toward the requested baseline.
-- Do not blindly roll back to old commits: later functional additions (gate, event content, RSVP test isolation) need to remain unless the owner explicitly requests removal.
+Canonical design reference: `DESIGN.md`.
 
 ---
 
-## 5. Directory and file map
+## 3. Event data
 
-```text
-nayla-bpar-invitation/
-├── app/
-│   ├── globals.css                 # Global visual system, invitation + gate styling
-│   ├── layout.tsx                  # Metadata and root layout
-│   ├── page.tsx                    # Route "/" → InvitationGate
-│   └── rsvp/
-│       └── page.tsx                # Route "/rsvp" → RsvpForm
-│
-├── components/
-│   ├── Countdown.tsx               # Client countdown renderer
-│   ├── Invitation.tsx              # Main invitation page composition
-│   ├── InvitationGate.tsx          # Client-side invitation-code gate
-│   └── RsvpForm.tsx                # RSVP multi-step UI
-│
-├── content/
-│   ├── event.ts                    # Approved event content and links
-│   └── menu.ts                     # Braci food/drink list
-│
-├── lib/
-│   ├── countdown.ts                # Pure countdown calculation
-│   ├── invitations.ts              # Guest lookup + session storage helpers
-│   ├── rsvp.ts                     # Validation, mapping, response parser, submit
-│   └── rsvp.test.ts                # Vitest coverage for RSVP behavior
-│
-├── public/
-│   └── outfit-inspo.png            # Tracked outfit inspiration asset
-│
-├── .env.example                    # NEXT_PUBLIC_RSVP_ENDPOINT=
-├── AGENTS.md                       # Partly stale project notes
-├── DESIGN.md                       # Original design spec; partly stale
-├── MENU_BRACI.md                   # Menu source material
-├── PRD.md
-├── README.md                       # Partly stale setup/content text
-├── TASKS.md
-├── TECH_STACK.md
-├── next.config.mjs
-├── package.json
-├── postcss.config.mjs
-├── tailwind.config.ts
-└── tsconfig.json
-```
+Source: `content/event.ts`
 
-### Approximate current source size
+| Field | Current value |
+|---|---|
+| Person | Nayla |
+| Occasion | Sweet Seventeen |
+| Date | Saturday, 17 October 2026 |
+| Time | 13.00–16.00 WIB |
+| Venue | Braci by Matoa Group |
+| Address | Jl. Sulanjana No. 5, Bandung |
+| Dress code | Cream or beige |
 
-```text
-app/*.tsx + app/*.css             208 lines
-components/*.tsx                  320 lines
-content/*.ts                      147 lines
-lib/*.ts                          255 lines
-Total                             930 lines
+Do not change event data, menu choices, or map destination without owner approval.
+
+---
+
+## 4. Invitation-code gate
+
+Files:
+
+- `app/page.tsx` renders `InvitationGate`.
+- `components/InvitationGate.tsx` contains UI and client gate state.
+- `lib/invitations.ts` contains guest lookup and serialization.
+- `app/globals.css` contains `.gate-*` styling.
+
+Behavior:
+
+1. User enters an uppercase alphanumeric six-character invitation code.
+2. `findGuestByCode()` identifies the guest only in frontend data.
+3. A valid match shows personalized confirmation.
+4. Continuing stores only guest `name` and `note` in `sessionStorage` under `nayla-invitation-guest`.
+5. Refresh in the same tab session bypasses the gate; Incognito/new session shows it again.
+6. The guest list/code is not included in the RSVP payload.
+
+Security boundary:
+
+- This is a personalization gate, **not authentication**. Guest data is bundled in the frontend and can be inspected by a determined visitor.
+- Do not claim that the gate provides strong access control.
+
+Manual reset for gate testing:
+
+```js
+sessionStorage.removeItem('nayla-invitation-guest');
+location.reload();
 ```
 
 ---
 
-## 6. Technology and scripts
+## 5. Invitation and RSVP behavior
 
-### Stack
+### Invitation
 
-```text
-Next.js 14.2.16
-React 18.3.1
-TypeScript 5.7
-Tailwind CSS 3.4
-Vitest 2.1
-Phosphor Icons
+Primary implementation: `components/Invitation.tsx`
+
+Includes:
+
+- hero and editorial marquee;
+- personal note;
+- date/time and venue section;
+- responsive Google Map embed plus external Google Maps action;
+- outfit inspiration preview and dialog;
+- countdown;
+- RSVP CTA.
+
+Outfit dialog requirements:
+
+- open from outfit preview;
+- close via close button, backdrop, or `Escape`;
+- lock background scroll while open;
+- retain visible focus styling.
+
+`public/outfit-inspo.png` is the tracked browser-served asset. `OUTFIT_INSPO.png` at repository root is an untracked source artifact; do not delete it without owner approval.
+
+### RSVP
+
+Files:
+
+- `app/rsvp/page.tsx`
+- `components/RsvpForm.tsx`
+- `lib/rsvp.ts`
+- `lib/rsvp.test.ts`
+- `content/menu.ts`
+
+Contract that must not change:
+
+```ts
+{
+  nama: string,
+  will_join: 'Ya' | 'Tidak',
+  makanan: string,
+  minuman: string,
+  notes_for_nayla: string
+}
 ```
 
-### Standard commands
+Rules:
+
+- `nama` and attendance are required.
+- When attending, exactly one food and one drink selection are required.
+- When not attending, food and drink submit as empty strings.
+- Submission is direct client-side `POST` via `FormData` to `NEXT_PUBLIC_RSVP_ENDPOINT`.
+- A valid endpoint response must be `{ result: 'success', row: integer }`.
+- After success, form must remain immutable; no re-edit/re-submit path.
+
+---
+
+## 6. Styling regression history and prevention
+
+### Fixed regression 1 — global styling absent
+
+Commit: `bf7383f fix(styles): restore global invitation stylesheet`
+
+Cause: `app/globals.css` was overwritten with only RSVP CSS. This removed:
+
+- `@tailwind base/components/utilities`;
+- global CSS variables and fonts;
+- invitation selectors such as `.hero-section`;
+- the rest of the site visual system.
+
+Prevention: never replace `app/globals.css` to add a small route-specific block. Integrate additions into the existing stylesheet or make a narrowly-scoped separate stylesheet.
+
+### Fixed regression 2 — gate visually unstyled/broken
+
+Commit: `6745444 fix(gate): restore invitation code modal layout`
+
+Cause: CSS targeted old `.gate-card` markup while the rendered component uses `.gate-modal`. The result was no usable padding/layout, and the CTA icon wrapped to a separate line.
+
+Current `.gate-*` styling provides centered responsive layout, modal padding, typography, code input, CTA layout, focus/error states, and mobile adjustments.
+
+---
+
+## 7. Repository map
+
+```text
+app/
+  globals.css                 Global tokens, invitation, gate, and RSVP styling
+  layout.tsx                  Root layout; imports globals.css
+  page.tsx                    Gate entry route
+  rsvp/page.tsx               RSVP page shell
+components/
+  Invitation.tsx              Main invitation experience + outfit dialog
+  InvitationGate.tsx          Code verification and session persistence
+  RsvpForm.tsx                RSVP form and immutable success state
+  Countdown.tsx               Countdown display
+content/
+  event.ts                    Event facts and external map URL
+  menu.ts                     RSVP menu options
+lib/
+  invitations.ts              Frontend guest-code lookup
+  rsvp.ts                     Validation, exact payload, POST/response parsing
+  rsvp.test.ts                RSVP validation/payload/response tests
+  countdown.ts                Countdown logic
+public/
+  outfit-inspo.png            Outfit image shown in site
+tailwind.config.ts            Tailwind configuration
+DESIGN.md                     Design-system reference
+```
+
+---
+
+## 8. Commands and verified status
+
+Run from repository root:
 
 ```bash
-cd /home/eska/Coding/nayla-bpar-invitation
-
 npm run dev
 npm run typecheck
 npm run lint
 npm test -- --run
 npm run build
-
-git status --short
-git log --oneline -10
 git diff --check
 ```
 
----
+Latest automated validation after the gate fix:
 
-## 7. Route behavior
+| Command | Result |
+|---|---|
+| `npm run typecheck` | passed |
+| `npm run lint` | passed, no ESLint warnings/errors |
+| `npm test -- --run` | passed, 1 file / 6 tests |
+| `npm run build` | passed; `/` and `/rsvp` statically generated |
+| `git diff --check` | passed |
 
-## Route `/`
-
-Source file:
-
-```text
-app/page.tsx
-```
-
-It renders only:
-
-```tsx
-<InvitationGate />
-```
-
-Runtime flow:
-
-```text
-Open /
-  ↓
-InvitationGate checks sessionStorage
-  ↓
-No stored guest → invitation-code form
-  ↓
-Valid code → personalized welcome screen
-  ↓
-Continue → guest name/note stored in sessionStorage
-  ↓
-Invitation renders
-```
-
-## Route `/rsvp`
-
-Source file:
-
-```text
-app/rsvp/page.tsx
-```
-
-It renders `RsvpForm` and includes a link back to `/`.
+Do not claim visual parity from these checks alone.
 
 ---
 
-## 8. Invitation gate implementation
+## 9. Visual/manual QA status
 
-Source file:
+Required viewport checks: `360px`, `375px`, `390px`, and desktop `1280px`.
 
-```text
-components/InvitationGate.tsx
-```
+Test:
 
-### Relevant state
+1. Gate: valid code, invalid code, uppercase normalization, six-character restriction, refresh persistence, incognito/new-session reset.
+2. Mobile: no horizontal overflow, clipping, accidental overlap, or inaccessible CTA.
+3. Desktop: stable hierarchy and balanced hero/date/venue/map composition.
+4. Outfit dialog: open, close button, backdrop close, `Escape`, body scroll lock.
+5. Map: responsive embed and correct external location action.
+6. RSVP: attending requires one food/drink; non-attending submits without menu; success state is immutable.
 
-```ts
-code
-guest
-storedGuest
-error
-isChecking
-```
+Known QA limitation:
 
-### Actual behavior
+- WSL-local HTTP checks worked, but Windows Chrome screenshot automation could not reliably reach the WSL development server. Previous screenshot files in `/home/eska/output/nayla-visual-qa/` captured browser connectivity error pages, not the invitation.
+- Therefore automated visual QA across required viewports is **not verified**. Manual browser inspection is still required after each visual change.
 
-1. On client mount, it reads session storage key:
+Non-blocking browser-console notes:
 
-   ```text
-   nayla-invitation-guest
-   ```
-
-2. If a stored guest object contains a `name` and `note`, it renders `<Invitation />`.
-3. Otherwise it renders the code gate.
-4. Code normalization is:
-
-   ```ts
-   value
-     .toUpperCase()
-     .replace(/[^A-Z0-9]/g, '')
-     .slice(0, 6)
-   ```
-
-5. Lookup uses `findGuestByCode` from `lib/invitations.ts`.
-6. A valid guest receives a personalized intermediate greeting.
-7. Continuing stores a serialized `{ name, note }` object in session storage.
-
-### Security limitation — do not misrepresent it
-
-The guest list and invitation codes currently exist in browser-shipped source at `lib/invitations.ts`. This is **not secure authentication or protected access control**. A technically capable visitor can inspect the browser bundle.
-
-Accurate framing:
-
-```text
-It is a lightweight personalization gate, not authentication.
-```
-
-A secure implementation would require server-side validation. That would be an architecture change and conflicts with the owner’s current no-backend/no-proxy direction; do not implement it without explicit approval.
-
-### Guest data safety
-
-- There are currently 20 guest entries in `lib/invitations.ts`.
-- `guest-codes.txt` is tracked locally as reference material.
-- Do not print, copy, publish, or disclose code values.
+- `GET /.well-known/appspecific/com.chrome.devtools.json 404` is Chrome DevTools probing an optional endpoint; it is unrelated to site styling.
+- Google Maps `net::ERR_BLOCKED_BY_CLIENT` means an extension/ad blocker blocked map content. It is not a CSS failure. Disable the blocker or test in a clean profile to evaluate the embed.
 
 ---
 
-## 9. Main invitation UI
+## 10. Git state and working rules
 
-Primary source files:
-
-```text
-components/Invitation.tsx
-app/globals.css
-content/event.ts
-components/Countdown.tsx
-lib/countdown.ts
-```
-
-### Current section order
-
-1. **Hero / cover**
-   - Deep-brown surface.
-   - Marquee with event labels.
-   - Small chapter markers.
-   - `You’re invited` kicker.
-   - Large `17` seal.
-   - Orbit-line decoration.
-   - Large `Nayla’s Sweet Seventeen` title.
-   - Date/venue summary.
-   - Scroll prompt.
-
-2. **Personal note**
-   - Warm-sand paper card.
-   - Tape treatment.
-   - Personal note / invitation text.
-
-3. **Date and venue**
-   - Editorial date card.
-   - Official date/time/venue/address.
-   - Google Maps CTA.
-   - Outfit inspiration CTA.
-
-4. **Details**
-   - Numbered fact sections:
-     - `01 Venue`
-     - `02 Reply`
-     - `03 Menu`
-   - Dress code and activity information.
-
-5. **Closing**
-   - Deep-brown closing region.
-   - Countdown to event.
-   - RSVP CTA.
-
-### Visual status
-
-The last code revision aimed to move back toward the composition seen around the requested `30d1261` baseline while preserving newer behavior. It is **not visually verified against the owner screenshot yet**.
-
-### Required next visual QA
-
-1. Start the site locally.
-2. Render around 390px wide, then test desktop width.
-3. Capture a screenshot.
-4. Compare it directly to the provided reference screenshot.
-5. Make changes from observed differences only.
-6. Commit each revision immediately.
-
-Do not rely on descriptions or Git diffs as evidence of visual fidelity.
-
----
-
-## 10. Styling system
-
-Primary stylesheet:
+Latest relevant local commits:
 
 ```text
-app/globals.css
+6745444 fix(gate): restore invitation code modal layout
+bf7383f fix(styles): restore global invitation stylesheet
+7010a8d style(rsvp): align form route with pink identity
+9bbe792 style(invitation): redesign pink editorial experience
+5bde3f1 docs: add comprehensive project handover
 ```
 
-Tailwind token mapping:
-
-```text
-tailwind.config.ts
-```
-
-### Color tokens
-
-```css
---vanilla-cream
---warm-sand
---latte
---cocoa-brown
---espresso
---muted-sage
-```
-
-### Font tokens
-
-```css
---font-display
---font-supporting
---font-accent
-```
-
-### Styling ownership rules
-
-- Keep markup and semantic classes in `components/Invitation.tsx`.
-- Keep visual treatment, layouts, media queries, and invitation-specific skinning in `app/globals.css`.
-- Avoid introducing random one-off hex values throughout JSX.
-- Preserve readable contrast: dark brown requires light text, light paper requires dark text.
-- Do not add decorative clutter just to make the page look “creative”. The reference is editorial and calm.
-
-### Current visual risk
-
-`app/layout.tsx` does not configure `next/font`. Therefore exact typography can drift between environments depending on the CSS fallbacks and browser. Do not claim font-level precision until actual rendered visual comparison is complete.
-
----
-
-## 11. Countdown
-
-Files:
-
-```text
-components/Countdown.tsx
-lib/countdown.ts
-```
-
-### Behavior
-
-- `getCountdown(target, now)` is pure and returns:
-
-  ```ts
-  {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  }
-  ```
-
-- `Countdown.tsx` updates every second on the client.
-- A passed event returns all zeroes.
-- The invitation should use the official event start: **17 October 2026, 13:00 WIB**.
-
----
-
-## 12. RSVP UI and state machine
-
-Files:
-
-```text
-components/RsvpForm.tsx
-lib/rsvp.ts
-content/menu.ts
-```
-
-### State machine
-
-```text
-details → menu → review → success
-```
-
-For a guest who cannot attend:
-
-```text
-details → review → success
-```
-
-### Details step
-
-Fields:
-
-```text
-name
-attendance: yes | no
-note
-```
-
-If the visitor entered via a valid invitation code, the guest name and note are prefilled from session storage.
-
-### Menu step
-
-Only shown if attendance is `yes`.
-
-Requirements:
-
-```text
-Exactly one food
-Exactly one drink
-```
-
-Selection is rendered using radio inputs, preserving single-select semantics.
-
-### Review step
-
-Shows:
-
-```text
-Name
-Attendance
-Food (attendees only)
-Drink (attendees only)
-Note
-```
-
-Editing is available **before** submission.
-
-### Success state
-
-After valid success response:
-
-```text
-Thank you, {name}.
-```
-
-There is no edit action in the success view. The current copy directs change requests to Nayla directly.
-
----
-
-## 13. RSVP network contract
-
-Source file:
-
-```text
-lib/rsvp.ts
-```
-
-### Internal form model
-
-```ts
-type RsvpForm = {
-  name: string;
-  attendance: 'yes' | 'no' | '';
-  food: string;
-  drink: string;
-  note: string;
-};
-```
-
-### Exact Apps Script payload
-
-```ts
-type RsvpPayload = {
-  nama: string;
-  will_join: 'Ya' | 'Tidak';
-  makanan: string;
-  minuman: string;
-  notes_for_nayla: string;
-};
-```
-
-### Mapping
-
-```ts
-nama: form.name.trim()
-will_join: form.attendance === 'yes' ? 'Ya' : 'Tidak'
-makanan: form.attendance === 'yes' ? form.food : ''
-minuman: form.attendance === 'yes' ? form.drink : ''
-notes_for_nayla: form.note.trim()
-```
-
-### Validation
-
-- Name is required.
-- Attendance is required.
-- Food and drink are each required only when `attendance === 'yes'`.
-
-### Endpoint configuration
-
-The endpoint is read from:
-
-```text
-NEXT_PUBLIC_RSVP_ENDPOINT
-```
-
-Example:
-
-```text
-.env.example
-```
-
-contains only:
-
-```text
-NEXT_PUBLIC_RSVP_ENDPOINT=
-```
-
-Do not paste the actual endpoint in this document or source unless the owner explicitly provides a safe public value.
-
-### Current transport and accepted response
-
-`submitRsvp` uses `fetch` with `FormData`.
-
-Accepted success response:
-
-```json
-{
-  "result": "success",
-  "row": 8
-}
-```
-
-Recognized error response:
-
-```json
-{
-  "result": "error",
-  "error": "..."
-}
-```
-
-### Runtime caveat
-
-The unit tests mock the endpoint. A real production endpoint/cross-origin integration has not been independently confirmed in this handover. Do not claim the live RSVP workflow works until a controlled production or staging request receives and verifies a real successful response.
-
----
-
-## 14. Menu data
-
-Source file:
-
-```text
-content/menu.ts
-```
-
-### Current scale
-
-```text
-73 menu items total
-```
-
-Categories:
-
-```text
-food
-drink
-```
-
-Sections include starters, Western dishes, pasta, Asian dishes, pizza, coffee, signature drinks, and refreshments. Every item contains an ID, category, section, name, description, and price.
-
-### UX risk
-
-The full menu is currently rendered as selectable cards. This can become very long on mobile. It works functionally but likely needs future UX refinement, such as grouped/filterable sections or a modal/drawer.
-
-Do not curate, remove, or change menu options without owner approval.
-
----
-
-## 15. Tests and validation evidence
-
-File:
-
-```text
-lib/rsvp.test.ts
-```
-
-### Current test coverage
-
-```text
-6 tests, all passing
-```
-
-Covered behavior:
-
-1. Required name and attendance validation.
-2. Required food/drink validation for attendees.
-3. Exact five-field attending payload mapping.
-4. Non-attendee mapping with blank menu fields.
-5. Strict success/error response parser behavior.
-6. `submitRsvp` FormData submission behavior.
-
-### Test endpoint isolation
-
-The test uses:
-
-```text
-https://example.invalid/rsvp
-```
-
-through:
-
-```ts
-vi.stubEnv('NEXT_PUBLIC_RSVP_ENDPOINT', 'https://example.invalid/rsvp')
-```
-
-This keeps the suite deterministic and avoids relying on `.env.local`.
-
-### Latest verified quality checks
-
-The following have passed:
-
-```bash
-npm run typecheck
-npm run lint
-npm test -- --run
-npm run build
-git diff --check
-```
-
-Observed build result:
-
-```text
-Route (app)                              Size     First Load JS
-┌ ○ /                                    8.73 kB         104 kB
-├ ○ /_not-found                          873 B            88 kB
-└ ○ /rsvp                                9.47 kB         105 kB
-```
-
-Both application routes are statically prerendered.
-
----
-
-## 16. Documentation drift and source-of-truth rules
-
-Several existing documents are stale. Do not blindly follow them.
-
-### `README.md`
-
-It says event time/address/dress/activity remain hidden until supplied. This is outdated; official content now exists in `content/event.ts`.
-
-### `AGENTS.md`
-
-It states or implies:
-
-- repository is documentation-only;
-- no executable project setup exists;
-- Apps Script validates invitation codes server-side;
-- browser must never receive the guest code list;
-- browser sends JSON as `text/plain`;
-- success returns `{ ok: true }`.
-
-These statements conflict with current implementation. Actual code ships a client-side guest list, submits `FormData`, and expects `{ result: 'success', row: number }`.
-
-### `DESIGN.md`
-
-It is useful for broad principles only. Some content/pending-data statements are obsolete. The owner screenshot and latest explicit direction take priority.
-
-### Correct authority order
-
-Use this order when requirements conflict:
-
-1. Latest explicit owner instruction.
-2. Owner-provided screenshot for visual result.
-3. Current tested source code for functional/API behavior.
-4. `content/event.ts` for event data.
-5. Git history for rollback/reference only.
-6. Older docs as non-authoritative context.
-
----
-
-## 17. Known risks and technical debt
-
-### 17.1 Frontend guest code exposure
-
-**Fact:** Invite codes reside in `lib/invitations.ts` and are shipped to clients.
-
-Impact:
-
-```text
-Not secure authentication.
-Codes can be extracted by inspecting a browser bundle.
-```
-
-Do not call it access protection or privacy protection.
-
-### 17.2 Live RSVP endpoint unverified
-
-Tests prove payload mapping and code paths, not the actual remote Apps Script behavior. Unknowns include:
-
-- actual endpoint availability;
-- CORS behavior from deployed Vercel origin;
-- acceptance of `FormData`;
-- response shape;
-- Vercel environment configuration.
-
-### 17.3 No successful visual screenshot QA after latest revisions
-
-A dev server could start, but browser harness visual capture was blocked because Chrome was not available/running. Therefore current design similarity is not evidence-verified.
-
-### 17.4 Untracked files
-
-At the time of handover, these untracked files existed and were intentionally untouched:
+Rules agreed with owner:
+
+- Commit every verified code/design/documentation change locally with a descriptive message.
+- Do not push or deploy automatically.
+- Do not delete user artifacts or untracked files without explicit approval.
+- Validate changes before committing.
+- Do not treat Git history as the visual source of truth; render against the provided reference.
+
+Current untracked artifacts intentionally left untouched:
 
 ```text
 .hermes/plans/2026-10-10_174743-rsvp-preview-first.md
@@ -811,142 +305,11 @@ OUTFIT_INSPO.png
 Party Outfit Inspo_ Cream & Beige.png:Zone.Identifier
 ```
 
-Do not add, delete, rename, or commit these files without owner instruction.
-
-### 17.5 Guest code reference material
-
-`guest-codes.txt` is tracked. Treat it as sensitive/private data. Do not expose it publicly.
-
-### 17.6 Font fidelity
-
-No `next/font` setup is present in `app/layout.tsx`. This may create browser/device typography drift from the screenshot target.
-
 ---
 
-## 18. Safe next steps for the next model
+## 11. Safe next steps
 
-### Priority 1 — establish visual evidence
-
-1. Inspect the latest source state before editing:
-
-   ```bash
-   git status --short
-   git log --oneline -10
-   npm run typecheck
-   npm run lint
-   ```
-
-2. Start local dev server:
-
-   ```bash
-   npm run dev
-   ```
-
-3. Capture `/` at approximately 390px mobile width and desktop width.
-4. Compare the render directly against:
-
-   ```text
-   /home/eska/.hermes/cache/images/img_09ca904feb1a.jpg
-   ```
-
-5. List observed mismatches by section: hero, note, date/venue, details, closing/countdown.
-6. Modify only based on those observed mismatches.
-7. Run checks and commit immediately:
-
-   ```bash
-   npm run typecheck && npm run lint && git diff --check
-   git add <files>
-   git commit -m "style(invitation): <specific visual change>"
-   ```
-
-### Priority 2 — preserve functional invariants
-
-Do not remove or alter without confirmation:
-
-```text
-InvitationGate
-The exact five RSVP fields
-Single-select food and drink behavior
-No API route/proxy/backend architecture
-Apps Script integration contract
-Final event data in content/event.ts
-```
-
-### Priority 3 — validate production only with owner approval
-
-Before deployment or live RSVP test:
-
-- verify endpoint configuration exists without disclosing it;
-- confirm Vercel environment variables and deployment target;
-- obtain explicit owner approval before sending a real RSVP payload;
-- read back the exact target result before claiming success.
-
----
-
-## 19. Completion criteria for future revisions
-
-Do not declare the visual work done until all are true.
-
-### Visual
-
-- Rendered screenshot is compared to the owner reference.
-- Hero, note, date/venue, details, and closing/countdown align in composition, spacing, color, hierarchy, and paper/stationery treatment.
-- Mobile and desktop are checked.
-- No generic dashboard/SaaS visual drift remains.
-- Text contrast is accessible.
-
-### Functional
-
-- Valid invitation code reaches the invitation.
-- Invalid code shows error.
-- Guest name/note persists for the browser session.
-- RSVP attending flow requires one food and one drink.
-- RSVP non-attending flow bypasses menu.
-- Submitted payload has exactly the five required fields.
-- Error states retain form data.
-- Success state appears only after a valid response.
-- Countdown targets 17 October 2026, 13:00 WIB.
-
-### Engineering
-
-```bash
-npm run typecheck
-npm run lint
-npm test -- --run
-npm run build
-git diff --check
-```
-
-All must pass, and every change group must have a dedicated commit.
-
----
-
-## 20. Fast reference
-
-```text
-Visual source of truth:
-/home/eska/.hermes/cache/images/img_09ca904feb1a.jpg
-
-Primary visual files:
-components/Invitation.tsx
-app/globals.css
-
-Primary event data:
-content/event.ts
-
-RSVP behavior:
-components/RsvpForm.tsx
-lib/rsvp.ts
-lib/rsvp.test.ts
-
-Invitation gate:
-components/InvitationGate.tsx
-lib/invitations.ts
-
-Do not expose:
-guest-codes.txt
-actual RSVP endpoint
-any secret/token/credential
-
-Do not auto-push or auto-deploy.
-```
+1. Open `http://localhost:3000` in a browser and perform the manual QA list above.
+2. Use a browser profile without ad blockers to evaluate the map embed.
+3. On any visual modification: inspect a real rendered screenshot, run relevant automated checks, then make one local commit.
+4. Keep all changes frontend-only unless the owner explicitly authorizes an Apps Script or architecture change.
