@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { Check, ForkKnife, Wine } from '@phosphor-icons/react';
 import { useState, type FormEvent } from 'react';
 import { menu, type MenuItem } from '@/content/menu';
-import { submitRsvp, validateRsvp, verifyInvitation, type RsvpForm } from '@/lib/rsvp';
+import { submitRsvp, validateRsvp, type RsvpForm } from '@/lib/rsvp';
 
-const initialForm: RsvpForm = { code: '', name: '', attendance: '', food: '', drink: '', note: '' };
-type Step = 'code' | 'details' | 'menu' | 'review' | 'success';
+const initialForm: RsvpForm = { name: '', attendance: '', food: '', drink: '', note: '' };
+type Step = 'details' | 'menu' | 'review' | 'success';
 
 const food = menu.filter((item) => item.category === 'food');
 const drinks = menu.filter((item) => item.category === 'drink');
@@ -23,8 +23,7 @@ function MenuCard({ item, selected, onSelect }: { item: MenuItem; selected: bool
 }
 
 export function RsvpForm() {
-  const [step, setStep] = useState<Step>('code');
-  const [code, setCode] = useState('');
+  const [step, setStep] = useState<Step>('details');
   const [form, setForm] = useState<RsvpForm>(initialForm);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
@@ -35,17 +34,6 @@ export function RsvpForm() {
     setErrors((current) => ({ ...current, [key]: undefined }));
   }
 
-  async function checkCode(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setBusy(true); setMessage('');
-    try {
-      const normalizedCode = code.trim();
-      const result = await verifyInvitation(normalizedCode);
-      if (!result.valid) { setMessage(result.error ?? 'That code does not look right. Please check your invitation and try again.'); return; }
-      setForm((current) => ({ ...current, code: normalizedCode }));
-      setStep('details');
-    } catch (error) { setMessage(error instanceof Error ? error.message : 'We could not check that code. Please try again.'); }
-    finally { setBusy(false); }
-  }
 
   function continueFromDetails(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,11 +48,16 @@ export function RsvpForm() {
     event.preventDefault();
     const nextErrors = validateRsvp(form);
     setErrors(nextErrors);
-    if (!nextErrors.food && !nextErrors.drink) setStep('review');
+    if (!Object.keys(nextErrors).length) setStep('review');
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setBusy(true); setMessage('');
+    event.preventDefault();
+    const nextErrors = validateRsvp(form);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length) return;
+
+    setBusy(true); setMessage('');
     try {
       const result = await submitRsvp(form);
       if (!result.ok) { setMessage(result.error ?? 'We could not save your RSVP. Please try again.'); return; }
@@ -75,18 +68,17 @@ export function RsvpForm() {
 
   if (step === 'success') return <div className="rounded-[2rem] bg-sand p-8 text-center sm:p-12" aria-live="polite"><p className="font-accent text-3xl text-cocoa">RSVP received</p><h2 className="mt-3 font-display text-5xl font-semibold">Thank you, {form.name}.</h2><p className="mx-auto mt-5 max-w-md leading-7 text-cocoa">Your response has been saved.</p><Link href="/" className="mt-8 inline-flex min-h-12 items-center rounded-full bg-espresso px-6 py-3 text-sm font-semibold text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-espresso">Back to invitation</Link></div>;
 
-  const stepNumber = step === 'code' ? 1 : step === 'details' ? 2 : step === 'menu' ? 3 : 4;
+  const stepNumber = step === 'details' ? 1 : step === 'menu' ? 2 : 3;
   const selectedFood = food.find((item) => item.id === form.food);
   const selectedDrink = drinks.find((item) => item.id === form.drink);
   const attending = form.attendance === 'yes';
 
   return <div className="rounded-[2rem] bg-sand p-6 sm:p-10">
-    <div className="mb-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-cocoa" aria-label={`Step ${stepNumber} of 4`}><span className="h-2 w-2 rounded-full bg-espresso" /> RSVP <span className="text-latte">/</span> {step === 'code' ? 'Access' : step === 'details' ? 'Details' : step === 'menu' ? 'Menu' : 'Review'}</div>
-    <div className="mb-6 h-1 rounded-full bg-latte/40" aria-hidden="true"><div className="h-1 rounded-full bg-espresso transition-all" style={{ width: `${stepNumber * 25}%` }} /></div>
-    <p className="sr-only" aria-live="polite">Step {stepNumber} of 4</p>
+    <div className="mb-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-cocoa" aria-label={`Step ${stepNumber} of 3`}><span className="h-2 w-2 rounded-full bg-espresso" /> RSVP <span className="text-latte">/</span> {step === 'details' ? 'Details' : step === 'menu' ? 'Menu' : 'Review'}</div>
+    <div className="mb-6 h-1 rounded-full bg-latte/40" aria-hidden="true"><div className="h-1 rounded-full bg-espresso transition-all" style={{ width: `${(stepNumber / 3) * 100}%` }} /></div>
+    <p className="sr-only" aria-live="polite">Step {stepNumber} of 3</p>
     {message && <p className="mb-5 rounded-xl border border-red-900/20 bg-red-50 p-3 text-sm text-red-950" role="alert" aria-live="assertive">{message}</p>}
 
-    {step === 'code' && <form onSubmit={checkCode} className="space-y-5"><div><label htmlFor="invite-code" className="text-sm font-semibold text-cocoa">Invitation code</label><input id="invite-code" value={code} onChange={(event) => setCode(event.target.value)} required autoComplete="off" className="mt-2 min-h-12 w-full rounded-xl border border-latte bg-cream px-4 text-cocoa focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-espresso" /></div><button disabled={busy} className="min-h-12 w-full rounded-full bg-espresso px-5 py-3 font-semibold text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-espresso disabled:opacity-60">{busy ? 'Checking...' : 'Continue'}</button></form>}
 
     {step === 'details' && <form onSubmit={continueFromDetails} className="space-y-6"><div><label htmlFor="guest-name" className="text-sm font-semibold text-cocoa">Your name</label><input id="guest-name" value={form.name} onChange={(event) => update('name', event.target.value)} autoComplete="name" className="mt-2 min-h-12 w-full rounded-xl border border-latte bg-cream px-4 text-cocoa focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-espresso" aria-invalid={Boolean(errors.name)} />{errors.name && <p className="mt-2 text-sm text-red-950" role="alert">{errors.name}</p>}</div><fieldset><legend className="text-sm font-semibold text-cocoa">Will you be joining?</legend><div className="mt-3 grid gap-3 sm:grid-cols-2"><label className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border bg-cream px-4 ${form.attendance === 'yes' ? 'border-espresso ring-2 ring-espresso' : 'border-latte'}`}><input type="radio" name="attendance" checked={form.attendance === 'yes'} onChange={() => { update('attendance', 'yes'); }} className="h-5 w-5 accent-espresso" /> Yes, I will join</label><label className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border bg-cream px-4 ${form.attendance === 'no' ? 'border-espresso ring-2 ring-espresso' : 'border-latte'}`}><input type="radio" name="attendance" checked={form.attendance === 'no'} onChange={() => { update('attendance', 'no'); }} className="h-5 w-5 accent-espresso" /> No, I cannot join</label></div>{errors.attendance && <p className="mt-2 text-sm text-red-950" role="alert">{errors.attendance}</p>}</fieldset><div><label htmlFor="guest-note" className="text-sm font-semibold text-cocoa">A note for Nayla <span className="font-normal text-cocoa/70">(optional)</span></label><textarea id="guest-note" value={form.note} onChange={(event) => update('note', event.target.value)} rows={4} className="mt-2 w-full rounded-xl border border-latte bg-cream px-4 py-3 text-cocoa focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-espresso" /></div><button disabled={busy} className="min-h-12 w-full rounded-full bg-espresso px-5 py-3 font-semibold text-cream focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-espresso disabled:opacity-60">Continue</button></form>}
 

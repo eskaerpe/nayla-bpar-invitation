@@ -7,7 +7,7 @@ const iconProps = { size: 20, weight: 'regular' as const, 'aria-hidden': true };
 
 const expectationFacts = [
   { number: '01', label: 'Venue', value: event.venue, detail: event.city, Icon: MapPin },
-  { number: '02', label: 'Reply', value: 'Invitation code', detail: 'Use your code to let us know.', Icon: Ticket },
+  { number: '02', label: 'Reply', value: 'RSVP online', detail: 'Let us know whether you can join.', Icon: Ticket },
   { number: '03', label: 'Menu', value: 'Braci menu', detail: 'Choose your menu when you RSVP.', Icon: ForkKnife },
 ];
 
