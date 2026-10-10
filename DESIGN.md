@@ -1,67 +1,43 @@
 # DESIGN — Nayla’s Sweet Seventeen
 
 ## Direction
-
-A private birthday invitation with a romantic editorial character: feminine, intimate, soft, and premium. It must read as a continuous invitation rather than a SaaS landing page or a generic birthday template. Typography, intentional whitespace, paper-like surfaces, and a small number of ornamental motifs carry the visual identity.
-
-The invitation is mobile-first. On narrow screens, every detail must remain readable, tap-safe, and inside stable gutters. Decorative rings, seals, tape, and oversized date numerals must never compete with functional content.
-
-## Reading order
-
-1. Nayla / Sweet Seventeen / Birthday Party
-2. Date and event time
-3. Personal invitation note
-4. Venue and map
-5. Dress code / outfit inspiration
-6. Useful details: venue, RSVP, menu
-7. Countdown and RSVP action
+A private birthday invitation with a high-end feminine editorial character: romantic, intimate, contemporary, and premium. Treat the invitation and RSVP as one authored experience, not a SaaS landing page. Use typography, intentional asymmetry, paper-like surfaces, restrained ornament, and clear wayfinding. No generic card grids, repetitive containers, empty art panels, or marketplace conventions.
 
 ## Palette
-
 | Token | Hex | Role |
 |---|---:|---|
-| Peony Pink | `#F2C1CF` | Hero, primary accent, RSVP emphasis |
-| Soft Pink | `#F8DDDD` | Letter, quiet color fields, form accents |
-| Cream | `#F4ECE2` | Alternate information section |
+| Peony Pink | `#F2C1CF` | Hero and primary accent |
+| Soft Pink | `#F8DDDD` | Selected states and letter surface |
+| Cream | `#F4ECE2` | Warm secondary surface |
 | Ivory | `#F8F5F1` | Main page surface |
-| White | `#FAF9F7` | Cards, map label, modal surface |
-| Dark Neutral Ink | `#352C34` | Primary text, contrast, closing section |
-| Plum | `#8D526B` | Secondary text accent and links |
+| White | `#FAF9F7` | Reading surfaces |
+| Dark Neutral Ink | `#352C34` | Primary text and closing contrast |
+| Plum | `#8D526B` | Links, active states, secondary accent |
 
-Chocolate brown, latte, beige, and sage are not part of the visual identity. Do not introduce dominant dark-brown surfaces or text. Validate foreground/background contrast before using pale pink for text.
+Chocolate brown, latte, beige, and sage are not identity colors. Avoid pale text on pale pink. Check foreground/background contrast for every state.
 
-## Typography
+## Typography & composition
+- Expressive high-contrast serif for Nayla, display headings, and date numerals.
+- Legible sans-serif for body, details, labels, navigation, and controls.
+- Restrained handwritten accent only for a few short phrases; never dense copy or controls.
+- Hero keeps Nayla as focal point and establishes Birthday Party → Nayla → Sweet Seventeen hierarchy. Keep ornaments outside text-safe areas.
+- Date, time, and venue form a single deliberate editorial composition; Braci is primary and “by Matoa Group” secondary.
+- Each section has a distinct purpose, one focal point, and a clear transition. Align asymmetric content to shared gutters.
+- RSVP is step-based and compact. Category navigation progressively reveals menu options; one choice per course, review before send. Keep selections and progress explicit.
+- Menu options are hosted guest choices, not products: prices, currency, checkout, cart, quantity, and subtotal must never appear in the guest UI.
 
-- **Display:** high-contrast expressive serif for `Nayla`, date numerals, major headings, and venue highlight.
-- **Supporting:** clean sans-serif for dates, address, labels, body copy, controls, and forms.
-- **Accent:** restrained handwritten/script only for a short invitation accent, signoff, or one emphasized word.
+## Responsive/accessibility
+- Mobile first; stable gutters, deliberate heading wraps, no horizontal overflow, minimum 44px primary touch targets, readable support text.
+- Use visible keyboard focus, semantic step headings, labeled search, radio semantics, and reduced-motion support.
+- Mobile category chips scroll horizontally; menu results scroll within a bounded viewport; sticky navigation/action must not obscure results.
+- Outfit preview must load from `/outfit-inspo.png`; modal closes with close control, backdrop, and Escape.
+- Map embed is responsive, has an explicit external Maps link, and must show a designed fallback instead of a blank area when unavailable.
 
-Never use handwritten type for dense body copy, form labels, dates, map metadata, countdown units, or CTAs.
-
-## Layout rules
-
-- Use `--page-gutter` as the shared horizontal rhythm.
-- Hero uses centered focal typography plus a secondary seal/orbit system outside text-safe zones.
-- Editorial asymmetry must still follow shared gutters and have clear purpose.
-- Each section gets one visual focal point. Do not stack arbitrary badges, cards, or shadows.
-- Cards are reserved for actual grouped information: note, venue facts, map, RSVP form, and modal.
-- Primary CTA must use explicit text, visible focus state, and a minimum 44px touch target.
-
-## Functional UI
-
-- Gate, RSVP, menu selection, success state, and lightbox use the same pink/ivory/ink identity.
-- The Google Map is an embedded responsive map, with the external Google Maps link retained as a secondary action.
-- Outfit inspiration opens in an image dialog with backdrop, close control, and Escape support.
-- RSVP invariants are architecture constraints: direct client-side Apps Script submission; exact five-field payload; no backend/proxy; immutable success state.
+## Functional constraints
+- Preserve gate and personalized guest session.
+- Preserve event: Saturday 17 October 2026, 13.00–16.00 WIB; Braci by Matoa Group; Jl. Sulanjana No. 5, Bandung.
+- Preserve frontend menu choices, categories, attendance rules, one-food/one-drink validation, and countdown target.
+- Payload must remain exactly `nama`, `will_join`, `makanan`, `minuman`, `notes_for_nayla`; no endpoint or backend changes. Never run a real production RSVP during QA.
 
 ## QA acceptance
-
-Test at 360px, 375px, 390px, and 1280px:
-
-- no horizontal overflow, accidental clipping, or unreadable overlap;
-- hero bottomline and scroll affordance remain visible;
-- headline wrapping is deliberate;
-- map and image dialog are operable;
-- countdown and CTA remain readable;
-- keyboard focus is visible;
-- the gate and RSVP pages belong to the same identity.
+Test invitation and RSVP at 360px, 375px, 390px, and 1280px. Check no overflow, clipping, overlapping copy, or unexplained blank areas; ensure map fallback/link, image/lightbox, step progression, back/forward selection persistence, exactly one food and drink, review, validation, and no displayed prices. Run typecheck, lint, tests, build, and `git diff --check`; inspect real rendered screenshots before claiming visual validation.
