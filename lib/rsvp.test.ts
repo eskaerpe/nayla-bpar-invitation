@@ -17,6 +17,7 @@ const attendingForm: RsvpForm = {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
 });
 
 describe('RSVP validation and payload mapping', () => {
@@ -68,6 +69,7 @@ describe('Apps Script response handling', () => {
   });
 
   it('posts only the five Apps Script fields and accepts the success JSON', async () => {
+    vi.stubEnv('NEXT_PUBLIC_RSVP_ENDPOINT', 'https://example.invalid/rsvp');
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ result: 'success', row: 8 }), { status: 200 }),
     );
