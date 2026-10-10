@@ -5,12 +5,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: 'var(--vanilla-cream)',
-        sand: 'var(--warm-sand)',
-        latte: 'var(--latte)',
-        cocoa: 'var(--cocoa-brown)',
-        espresso: 'var(--espresso)',
-        sage: 'var(--muted-sage)',
+        peony: 'var(--peony-pink)',
+        blush: 'var(--soft-pink)',
+        cream: 'var(--cream)',
+        ivory: 'var(--ivory)',
+        paper: 'var(--white)',
+        ink: 'var(--ink)',
+        cocoa: 'var(--ink)',
+        espresso: 'var(--ink)',
+        latte: 'var(--plum)',
+        sand: 'var(--soft-pink)',
       },
       fontFamily: {
         display: ['var(--font-display)', 'serif'],
