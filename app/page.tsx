@@ -1,5 +1,5 @@
-import { Invitation } from '@/components/Invitation';
+import { InvitationGate } from '@/components/InvitationGate';
 
 export default function HomePage() {
-  return <Invitation />;
+  return <InvitationGate />;
 }
