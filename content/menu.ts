@@ -7,7 +7,6 @@ export type MenuSection =
   | 'pasta'
   | 'signature pasta'
   | 'asian'
-  | 'add-on asian'
   | 'pizza'
   | 'coffee'
   | 'signature drinks'
@@ -55,8 +54,6 @@ export const menu: MenuItem[] = [
   { id: 'hainan-chicken-rice', category: 'food', section: 'asian', name: 'HAINAN CHICKEN RICE', description: 'Aromatic rice, Hainanese chicken, char siu chicken, chicken stock, pickles, and sambal.', price: 85000 },
   { id: 'nasi-goreng-buntut-cabe-ijo', category: 'food', section: 'asian', name: 'NASI GORENG BUNTUT CABE IJO', description: 'Beef oxtail, sambal hijau, sunny-side-up egg, and melinjo crackers.', price: 98000 },
   { id: 'nasi-campur-bali', category: 'food', section: 'asian', name: 'NASI CAMPUR BALI', description: 'Lime leaf rice, telur balado, chicken genep, sate lilit, vegetable urab, crackers, and sambal matah.', price: 85000 },
-  { id: 'potato-chips', category: 'food', section: 'add-on asian', name: 'POTATO CHIPS', description: '', price: 25000 },
-  { id: 'mashed-potato-asian', category: 'food', section: 'add-on asian', name: 'MASHED POTATO', description: '', price: 25000 },
   { id: 'classic-margherita', category: 'food', section: 'pizza', name: 'CLASSIC MARGHERITA', description: 'Tomato sauce, basil, Grana Padano.', price: 80000 },
   { id: 'chicken-diavola', category: 'food', section: 'pizza', name: 'CHICKEN DIAVOLA', description: 'Chipotle mayo, chicken, caramelized onion.', price: 110000 },
   { id: 'americano', category: 'drink', section: 'coffee', name: 'AMERICANO', description: 'Pilihan: Honey / Peach / Orange.', price: 32000 },
