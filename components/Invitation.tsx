@@ -1,275 +1,90 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, ForkKnife, MapPin, Sparkle, Ticket, X } from '@phosphor-icons/react';
+import { ArrowUpRight, MapPin } from '@phosphor-icons/react';
 import { event } from '@/content/event';
 import { Countdown } from './Countdown';
 
-const iconProps = { size: 20, weight: 'regular' as const, 'aria-hidden': true };
-
-// ── Details / facts ──────────────────────────────────────────────
-const expectationFacts = [
-  {
-    number: '01',
-    label: 'Venue',
-    value: event.venue,
-    valueNode: (
-      <p className="fact-value">
-        <span>Braci</span>
-        <span className="fact-value-muted"> by Matoa Group</span>
-      </p>
-    ),
-    detail: event.address ?? event.city,
-    Icon: MapPin,
-  },
-  {
-    number: '02',
-    label: 'Dress code',
-    value: null,
-    valueNode: <p className="fact-value">{event.dressCode ?? 'To be announced'}</p>,
-    detail: 'Think soft, warm neutrals — cream, ivory, ecru, or beige.',
-    Icon: Sparkle,
-  },
-  {
-    number: '03',
-    label: 'Activities',
-    value: null,
-    valueNode: <p className="fact-value">{event.activities?.join(', ') ?? 'To be announced'}</p>,
-    detail: 'An afternoon of food, fun, and good company.',
-    Icon: Sparkle,
-  },
-  {
-    number: '04',
-    label: 'Reply',
-    value: null,
-    valueNode: <p className="fact-value">RSVP online</p>,
-    detail: 'Scroll to the bottom and fill in your RSVP — it only takes a minute.',
-    Icon: Ticket,
-  },
-  {
-    number: '05',
-    label: 'Hunger buster',
-    value: null,
-    valueNode: <p className="fact-value">Free lunch, on Nayla</p>,
-    detail: "We've got your hunger covered — just don't forget to choose your meal when you RSVP.",
-    Icon: ForkKnife,
-  },
+const detailRows = [
+  { number: '01', label: 'Venue', value: 'Braci Bandung', copy: event.address ?? event.city },
+  { number: '02', label: 'Dress code', value: event.dressCode ?? 'Cream or beige', copy: 'Cream or beige tones are welcome.' },
+  { number: '03', label: 'Activities', value: 'Makan-makan bersama · Games · Dan keseruan lainnya', copy: 'An afternoon to eat, play, and celebrate together.' },
+  { number: '04', label: 'Reply', value: 'RSVP online', copy: 'Let us know whether you can join.' },
+  { number: '05', label: 'Menu', value: 'Braci menu', copy: 'Choose your menu when you RSVP.' },
 ];
 
-// ── Outfit modal ─────────────────────────────────────────────────
-function OutfitModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div
-      className="outfit-modal-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Outfit inspiration"
-      onClick={onClose}
-    >
-      <div className="outfit-modal-inner" onClick={(e) => e.stopPropagation()}>
-        <button className="outfit-modal-close" onClick={onClose} aria-label="Close">
-          <X size={22} weight="bold" aria-hidden />
-        </button>
-        <Image
-          src="/outfit-inspo.png"
-          alt="Cream and beige outfit inspiration"
-          width={1254}
-          height={1254}
-          className="outfit-modal-img"
-          priority
-        />
-      </div>
-    </div>
-  );
+function SectionMarker({ number, children, dark = false }: { number: string; children: React.ReactNode; dark?: boolean }) {
+  return <p className={`paper-marker${dark ? ' paper-marker-dark' : ''}`}><span>{number}</span>{children}</p>;
 }
 
-// ── Main component ───────────────────────────────────────────────
 export function Invitation() {
-  const target = event.timezone
-    ? new Date(`${event.isoDate}T${event.startTime}${event.timezone}`)
-    : null;
-
-  const [outfitOpen, setOutfitOpen] = useState(false);
-
-  // Google Maps embed ID extracted from the short URL's redirect — use the raw coords embed
-  // Braci Bandung: Jl. Sulanjana No. 5 → lat/lng approximate for embed
-  const mapEmbedSrc =
-    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.6!2d107.6072!3d-6.9025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e7da08a4d7a3%3A0x1a4d2e3f5b8c9e2f!2sBraci%20by%20Matoa%20Group!5e0!3m2!1sen!2sid!4v1';
+  const target = event.timezone ? new Date(`${event.isoDate}T${event.startTime}${event.timezone}`) : null;
 
   return (
-    <main>
-      {/* ── HERO ───────────────────────────────────────────── */}
-      <section className="hero-section" aria-labelledby="hero-title">
-        <div className="hero-marquee" aria-hidden="true">
-          <div className="hero-marquee-track">
-            <span>NAYLA / SWEET SEVENTEEN / BRACI BANDUNG / 17 OCTOBER 2026</span>
-            <span>NAYLA / SWEET SEVENTEEN / BRACI BANDUNG / 17 OCTOBER 2026</span>
-          </div>
-        </div>
-        <div className="hero-frame">
-          <div className="hero-topline"><span>Invitation no. 17</span><span>Chapter 01 / 2026</span></div>
-          <div className="hero-composition">
-            <p className="hero-invite font-accent">You&apos;re invited</p>
-            <p className="hero-side-note">A birthday worth remembering</p>
-            <h1 id="hero-title" className="hero-name font-display">Nayla<em>&apos;s</em></h1>
-            <p className="hero-occasion">Sweet Seventeen</p>
-          </div>
-          <div className="hero-date-stamp" aria-label={`Date: ${event.dateLabel}`}>
-            <span className="hero-stamp-day">17</span>
-            <span className="hero-stamp-month">OCT</span>
-            <span className="hero-stamp-year">2026</span>
-          </div>
+    <main className="invitation-page">
+      <section className="cover-section">
+        <p className="cover-running">NAYLA / SWEET SEVENTEEN / BRACI BANDUNG / 17 OCTOBER</p>
+        <div className="cover-frame" aria-hidden="true" />
+        <p className="cover-id">Invitation no. 17</p>
+        <p className="cover-bloom">A celebration<br />in full bloom</p>
+        <p className="cover-invite">You&apos;re invited</p>
+        <div className="cover-stamp" aria-label="Sweet seventeen"><span>Sweet<br />Seventeen</span><strong>17</strong></div>
+        <div className="cover-orbits" aria-hidden="true"><i /><i /><i /><b /><em /></div>
+        <h1 className="cover-title"><span>Nayla&apos;s</span><em>Sweet</em><strong>Seventeen</strong></h1>
+        <span className="cover-ghost-number" aria-hidden="true">17</span>
+        <div className="cover-footer"><p>Scroll to unfold</p><span>Saturday 17 October 2026 · Braci Bandung</span><i /></div>
+      </section>
+
+      <section className="note-section">
+        <SectionMarker number="02">Note</SectionMarker>
+        <div className="note-card">
+          <i className="tape tape-top" aria-hidden="true" />
+          <i className="tape tape-bottom" aria-hidden="true" />
+          <p className="note-kicker">A little note</p>
+          <p className="note-copy">A page kept<br />for you.</p>
+          <p className="note-signoff">With love,</p>
+          <p className="note-signature">Nayla</p>
         </div>
       </section>
 
-      {/* ── NOTE ───────────────────────────────────────────── */}
-      <section className="note-section" aria-labelledby="note-title">
-        <div className="section-shell note-layout">
-          <div className="section-marker"><span>02</span><span>A note</span></div>
-          <div className="letter-card">
-            <h2 id="note-title">A page kept<br /><em>for you.</em></h2>
-            {event.personalNote
-              ? <p className="letter-copy">{event.personalNote}</p>
-              : null}
-            <div className="letter-signoff"><span>With love,</span><strong>Nayla</strong></div>
-          </div>
-          <div className="letter-aside" aria-hidden="true"><span>save</span><span>the</span><strong>date</strong></div>
+      <section className="place-section">
+        <SectionMarker number="03" dark>When / where</SectionMarker>
+        <div className="date-block">
+          <p>Save the date</p><span>{event.dayLabel}</span><small>{event.timeLabel}</small>
+          <strong>17</strong><em>{event.monthLabel} {event.yearLabel}</em>
+        </div>
+        <article className="place-card">
+          <p className="place-meta"><span>Field note 03</span><span>Bandung, ID</span></p>
+          <MapPin size={17} weight="fill" aria-hidden="true" />
+          <p className="place-kicker">The gathering place</p>
+          <h2>Braci<br />Bandung</h2>
+          <address>{event.address}<br />{event.city}</address>
+          {event.mapUrl && <Link href={event.mapUrl} target="_blank" rel="noreferrer" className="place-link">Open in Google Maps <ArrowUpRight size={14} weight="bold" /></Link>}
+          <hr />
+          <p className="place-kicker">Outfit references</p>
+          <div className="outfit-links">{event.outfitReferences.map((reference) => <Link key={reference.url} href={reference.url} target="_blank" rel="noreferrer">{reference.label} <ArrowUpRight size={12} weight="bold" /></Link>)}</div>
+        </article>
+      </section>
+
+      <section className="details-section">
+        <SectionMarker number="04">Details</SectionMarker>
+        <p className="details-eyebrow">The small print</p>
+        <h2>Make a note<br />of this.</h2>
+        <div className="detail-list">
+          {detailRows.map((item) => <article className="detail-row" key={item.number}>
+            <span>{item.number}</span><div><p>{item.label}</p><h3>{item.value}</h3><small>{item.copy}</small></div>
+          </article>)}
         </div>
       </section>
 
-      {/* ── WHEN / WHERE ───────────────────────────────────── */}
-      <section className="date-section" aria-labelledby="date-title">
-        <div className="section-shell date-layout">
-
-          {/* Left: typographic date headline */}
-          <div className="date-heading">
-            <div className="section-marker section-marker-dark"><span>03</span><span>When / where</span></div>
-            <h2 id="date-title" className="date-headline">
-              <span className="date-headline-day">{event.dayLabel}</span>
-              <span className="date-headline-num">17</span>
-              <span className="date-headline-month">{event.monthLabel}</span>
-              <span className="date-headline-time">{event.timeLabel}</span>
-            </h2>
-          </div>
-
-          {/* Right: card */}
-          <div className="date-card">
-            <div className="date-card-top">
-              <span>Field note 03</span>
-              <span>{event.city.replace(', Indonesia', ', ID')}</span>
-            </div>
-
-            {/* Decorative art */}
-            <div className="date-card-art" aria-hidden="true">
-              <div className="sun-disc" />
-              <div className="arch-line" />
-              <div className="arch-line arch-line-small" />
-              <Sparkle className="date-spark" {...iconProps} size={24} />
-            </div>
-
-            {/* Venue */}
-            <p className="section-kicker">The gathering place</p>
-            <h3 className="date-card-venue">
-              Braci<span className="date-card-venue-muted"> by Matoa Group</span>
-            </h3>
-            <p className="date-card-address">{event.address}<br />{event.city}</p>
-
-            {/* Google Maps embed */}
-            <div className="map-embed-wrap">
-              <iframe
-                src={mapEmbedSrc}
-                title="Braci by Matoa Group location"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-                className="map-embed"
-              />
-            </div>
-            <a
-              href={event.mapUrl ?? '#'}
-              target="_blank"
-              rel="noreferrer"
-              className="map-open-link"
-            >
-              Open in Google Maps <ArrowUpRight {...iconProps} size={16} />
-            </a>
-
-            {/* Outfit inspo */}
-            <div className="outfit-references">
-              <p className="outfit-references-label">Dress code inspiration</p>
-              <button
-                className="outfit-inspo-thumb-btn"
-                onClick={() => setOutfitOpen(true)}
-                aria-label="View outfit inspiration photo"
-              >
-                <Image
-                  src="/outfit-inspo.png"
-                  alt="Cream and beige outfit inspiration"
-                  width={320}
-                  height={320}
-                  className="outfit-inspo-thumb"
-                />
-                <span className="outfit-inspo-overlay">
-                  <ArrowUpRight size={20} weight="bold" aria-hidden /> View
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Lightbox modal */}
-      {outfitOpen && <OutfitModal onClose={() => setOutfitOpen(false)} />}
-
-      {/* ── DETAILS ────────────────────────────────────────── */}
-      <section className="facts-section" aria-labelledby="facts-title">
-        <div className="section-shell facts-layout">
-          <div className="facts-heading">
-            <div className="section-marker"><span>04</span><span>Details</span></div>
-            <p className="section-kicker">The small print</p>
-            <h2 id="facts-title">Make a note<br /><em>of this.</em></h2>
-          </div>
-          <ol className="facts-list" aria-label="Invitation details">
-            {expectationFacts.map((fact) => {
-              const Icon = fact.Icon;
-              return (
-                <li className="fact-row" key={fact.label}>
-                  <span className="fact-number">{fact.number}</span>
-                  <div>
-                    <p className="fact-label">{fact.label}</p>
-                    {fact.valueNode}
-                    <p className="fact-detail">{fact.detail}</p>
-                  </div>
-                  <Icon className="fact-icon" {...iconProps} />
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-      </section>
-
-      {/* ── UNTIL THEN / CLOSING ───────────────────────────── */}
-      <section className="closing-section" aria-labelledby="closing-title">
-        <div className="section-shell closing-content">
-          <div className="section-marker section-marker-dark"><span>05</span><span>Until then</span></div>
-          <h2 id="closing-title">See you<br /><em>on the 17th.</em></h2>
-
-          <div className="closing-meta-row">
-            {target ? (
-              <Countdown target={target} />
-            ) : (
-              <p className="closing-pending">{event.closingLine}</p>
-            )}
-          </div>
-
-          <Link href="/rsvp" className="closing-cta">
-            RSVP &amp; choose your menu <ArrowUpRight {...iconProps} />
-          </Link>
-
-          <p className="closing-signature font-accent">Nayla&apos;s Sweet Seventeen</p>
-        </div>
+      <section className="closing-section" id="rsvp">
+        <SectionMarker number="05">Until then</SectionMarker>
+        <p className="closing-kicker">A final note</p>
+        <h2>See you<br />on the 17th.</h2>
+        <p className="closing-copy">Save the date. RSVP / Menu</p>
+        <Countdown target={target} />
+        <Link href="/rsvp" className="rsvp-link">RSVP &amp; choose your menu <ArrowUpRight size={20} weight="bold" /></Link>
+        <p className="closing-name">Nayla&apos;s Sweet Seventeen</p>
       </section>
     </main>
   );
