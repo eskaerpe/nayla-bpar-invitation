@@ -30,7 +30,7 @@ a { color: inherit; }
 .font-accent { font-family: var(--font-accent); }
 
 /* Hero */
-.hero-section { position: relative; min-height: max(42rem, 100svh); overflow: hidden; background: var(--peony-pink); color: var(--ink); isolation: isolate; }
+.hero-section { position: relative; min-height: max(42rem, 100svh); overflow: hidden; background-color: var(--soft-pink); background-image: radial-gradient(ellipse 74% 58% at 5% 8%, rgb(242 193 207 / 90%) 0%, rgb(242 193 207 / 0%) 72%), radial-gradient(ellipse 60% 78% at 96% 5%, rgb(248 245 241 / 94%) 0%, rgb(248 245 241 / 0%) 70%), radial-gradient(ellipse 76% 62% at 86% 100%, rgb(244 236 226 / 90%) 0%, rgb(244 236 226 / 0%) 73%), radial-gradient(ellipse 58% 48% at 14% 92%, rgb(248 221 221 / 84%) 0%, rgb(248 221 221 / 0%) 76%), linear-gradient(135deg, var(--soft-pink), var(--white)); color: var(--ink); isolation: isolate; }
 .hero-section::before { position: absolute; inset: clamp(.7rem, 2vw, 1.4rem); border: 1px solid rgb(53 44 52 / 23%); content: ''; pointer-events: none; z-index: -1; }
 .hero-marquee { position: relative; z-index: 2; overflow: hidden; border-block: 1px solid rgb(53 44 52 / 23%); background: var(--ink); color: var(--white); white-space: nowrap; }
 .hero-marquee-track { display: flex; width: max-content; animation: marqueeflow 30s linear infinite; }
@@ -121,7 +121,12 @@ h2 { margin: .65rem 0 0; font-family: var(--font-display); font-size: clamp(3rem
   .gate-form { margin-top: 1.75rem; }
   .gate-kicker { margin-top: 1.25rem; }
 }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }.hero-marquee-track { animation: none; } }
+
+/* Scroll reveal: only apply hidden initial state once JS has initialized. */
+.has-scroll-reveal [data-reveal] { opacity: 0; transform: translateY(1.25rem); transition: opacity 760ms cubic-bezier(.2,.7,.25,1) var(--reveal-delay, 0ms), transform 760ms cubic-bezier(.2,.7,.25,1) var(--reveal-delay, 0ms); }
+.has-scroll-reveal [data-reveal].is-revealed { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; }.hero-marquee-track { animation: none; } .has-scroll-reveal [data-reveal] { opacity: 1; transform: none; transition: none; } }
+
 
 /* Invitation refinements */
 .hero-marquee span { padding: .72rem 1.15rem; font-size: .72rem; letter-spacing: .2em; }
@@ -136,6 +141,7 @@ h2 { margin: .65rem 0 0; font-family: var(--font-display); font-size: clamp(3rem
 .detail-item { grid-template-columns: auto 1fr; }
 .detail-item__number { display: none; }
 .gate-welcome h1 em { display: inline-block; margin-top: .18em; }
+.gate-welcome h1 em { word-spacing: .09em; }
 .gate-modal h1 { line-height: .88; }
 .gate-kicker { margin-top: 1.5rem; line-height: 1.5; }
 .gate-hint, .gate-copy, .gate-footer { line-height: 1.65; }
@@ -171,10 +177,16 @@ h2 { margin: .65rem 0 0; font-family: var(--font-display); font-size: clamp(3rem
 .map-panel__label { z-index: 2; }
 .outfit-layout { grid-template-columns: minmax(18rem, .8fr) minmax(0, 1.2fr); align-items: center; gap: clamp(2rem, 8vw, 8rem); }
 .outfit-copy { max-width: 30rem; font-size: 1rem; line-height: 1.8; }
-.outfit-preview { position: relative; display: block; width: min(100%, 37rem); height: auto; max-height: 34rem; overflow: hidden; justify-self: end; border: 0; padding: 0; background: var(--soft-pink); cursor: zoom-in; }
+.outfit-preview { position: relative; display: block; width: min(100%, 37rem); height: auto; max-height: 34rem; overflow: hidden; justify-self: end; border: 0; padding: 0; background: var(--soft-pink); color: var(--ink); cursor: zoom-in; -webkit-tap-highlight-color: transparent; }
 .outfit-preview img { display: block; width: 100%; height: 100%; max-height: 34rem; object-fit: contain; transition: transform .4s ease; }
 .outfit-preview:hover img { transform: scale(1.025); }
 .outfit-preview > span { position: absolute; right: .9rem; bottom: .9rem; display: inline-flex; align-items: center; gap: .45rem; padding: .75rem .9rem; background: var(--white); color: var(--ink); font-size: .72rem; font-weight: 750; }
+.outfit-preview:focus-visible { outline: 3px solid var(--plum); outline-offset: 5px; }
+.button--primary { min-height: 3.65rem; padding: 1rem 1.55rem; border: 1px solid var(--peony-pink); border-radius: 999px; background: var(--peony-pink); color: var(--ink); box-shadow: 0 8px 24px rgb(242 193 207 / 22%); font-size: .74rem; letter-spacing: .1em; transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
+.button--primary:hover { transform: translateY(-2px); border-color: var(--white); background: var(--white); box-shadow: 0 12px 28px rgb(0 0 0 / 20%); }
+.button--primary:active { transform: translateY(0) scale(.98); }
+.button--primary:focus-visible { outline: 3px solid var(--white); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) { .button--primary { transition: none; } .outfit-preview img { transition: none; } }
 .closing-content h2 { font-size: clamp(4rem, 10vw, 8.5rem); }
 .closing-copy { max-width: 33rem; margin: 1rem auto 0; color: rgb(250 249 247 / 82%); font-size: 1.05rem; line-height: 1.7; }
 .closing-countdown { width: min(100%, 36rem); margin: clamp(2rem, 5vw, 3.5rem) auto; }
@@ -262,6 +274,8 @@ h2 { margin: .65rem 0 0; font-family: var(--font-display); font-size: clamp(3rem
   .outfit-layout { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
   .outfit-preview { width: 100%; max-height: none; justify-self: stretch; }
   .outfit-preview img { height: auto; max-height: none; object-fit: initial; }
+  .outfit-preview:focus-visible { outline-offset: 3px; }
+  .button--primary { width: 100%; max-width: 24rem; min-height: 3.8rem; padding-inline: 1rem; font-size: .7rem; }
   .hero-bottomline { align-items: start; gap: .55rem; }
   .hero-bottomline p { font-size: .68rem; }
   .hero-bottomline a { min-height: 2.65rem; max-width: 10rem; font-size: .62rem; }
@@ -304,7 +318,7 @@ h2 { margin: .65rem 0 0; font-family: var(--font-display); font-size: clamp(3rem
   .rsvp-progress li > span { width: 1.5rem; height: 1.5rem; }
   .rsvp-button { font-size: .76rem; }
 }
-@media (prefers-reduced-motion: reduce) { .outfit-preview img { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .outfit-preview img { transition: none; } .button--primary { transition: none; } }
 /* RSVP route */
 .rsvp-page { min-height: 100svh; background: var(--ivory); color: var(--ink); }
 .rsvp-page__marquee { overflow: hidden; padding: .72rem var(--page-gutter); background: var(--ink); color: var(--white); font-size: .61rem; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; }
