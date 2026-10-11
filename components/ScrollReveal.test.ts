@@ -8,21 +8,16 @@ const invitation = readFileSync(fileURLToPath(new URL('./Invitation.tsx', import
 const event = readFileSync(fileURLToPath(new URL('../content/event.ts', import.meta.url)), 'utf8');
 
 describe('ScrollReveal', () => {
-  it('targets each hero element for a staggered entrance', () => {
-    for (const selector of [
-      "'.hero-topline'", "'.hero-seal'", "'.hero-kicker'", "'.hero-invite'",
-      "'.hero-celebrate'", "'#hero-title'", "'.hero-occasion'", "'.hero-bottomline > *'",
-    ]) expect(component).toContain(selector);
-    expect(component).toContain('heroIndex >= 0 ? heroIndex * 180');
-  });
-
-  it('applies the reveal styles with a visible hero-specific entrance', () => {
+  it('keeps hero content visible by excluding it from scroll-reveal targets', () => {
+    expect(component).not.toContain("'.hero-topline'");
+    expect(component).not.toContain("'.hero-seal'");
+    expect(component).not.toContain("'#hero-title'");
+    expect(component).not.toContain('heroIndex >= 0 ? heroIndex * 180');
     expect(styles).toContain('.has-scroll-reveal [data-reveal]');
     expect(styles).toContain('[data-reveal].is-revealed');
-    expect(styles).toContain('.has-scroll-reveal .hero-section [data-reveal]');
-    expect(styles).toContain('prefers-reduced-motion: reduce');
-    expect(component).toContain('IntersectionObserver');
-    expect(component).toContain('is-revealed');
+    expect(styles).not.toContain('hero-reveal-ready');
+    expect(styles).not.toContain('.has-scroll-reveal .hero-section [data-reveal]');
+    expect(styles).toContain('Hero content is always visible');
   });
 
   it('keeps the invitation note in Nayla’s first-person voice without em dashes', () => {

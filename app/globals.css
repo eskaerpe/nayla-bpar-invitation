@@ -319,14 +319,18 @@ h2 { margin: .65rem 0 0; font-family: var(--font-display); font-size: clamp(3rem
   .rsvp-progress li > span { width: 1.5rem; height: 1.5rem; }
   .rsvp-button { font-size: .76rem; }
 }
-/* Hero reveal: visible from the initial viewport, with staggered editorial entrances. */
-.has-scroll-reveal .hero-section [data-reveal] { opacity: 0; transform: translate3d(0, 2rem, 0) scale(.985); filter: blur(5px); transition: opacity 900ms cubic-bezier(.2,.7,.25,1) var(--reveal-delay, 0ms), transform 1100ms cubic-bezier(.16,1,.3,1) var(--reveal-delay, 0ms), filter 900ms cubic-bezier(.2,.7,.25,1) var(--reveal-delay, 0ms); will-change: opacity, transform, filter; }
-.has-scroll-reveal .hero-section [data-reveal=""] { animation: hero-reveal-ready 1ms linear both; }
-@keyframes hero-reveal-ready { from { opacity: 0; } to { opacity: 0; } }
-.has-scroll-reveal .hero-section [data-reveal].is-revealed { opacity: 1; transform: none; filter: none; }
+/* Hero content is always visible; entrance motion never controls its opacity. */
+.hero-topline, .hero-seal, .hero-copy > * { animation: hero-content-enter 850ms cubic-bezier(.16, 1, .3, 1) both; }
+.hero-seal { animation-delay: 80ms; }
+.hero-copy > :nth-child(1) { animation-delay: 140ms; }
+.hero-copy > :nth-child(2) { animation-delay: 220ms; }
+.hero-copy > :nth-child(3) { animation-delay: 300ms; }
+.hero-copy > :nth-child(4) { animation-delay: 380ms; }
+.hero-copy > :nth-child(5) { animation-delay: 460ms; }
+@keyframes hero-content-enter { from { transform: translate3d(0, 1rem, 0); } to { transform: translate3d(0, 0, 0); } }
 .has-scroll-reveal :not(.hero-section) [data-reveal] { opacity: 0; transform: translateY(1.25rem); transition: opacity 760ms cubic-bezier(.2,.7,.25,1) var(--reveal-delay, 0ms), transform 760ms cubic-bezier(.2,.7,.25,1) var(--reveal-delay, 0ms); }
 .has-scroll-reveal :not(.hero-section) [data-reveal].is-revealed { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .outfit-preview img, .button--primary { transition: none; } .has-scroll-reveal [data-reveal] { opacity: 1; transform: none; filter: none; transition: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .outfit-preview img, .button--primary { transition: none; } .hero-topline, .hero-seal, .hero-copy > * { animation: none; } .has-scroll-reveal [data-reveal] { opacity: 1; transform: none; transition: none; } }
 /* RSVP route */
 .rsvp-page { min-height: 100svh; background: var(--ivory); color: var(--ink); }
 .rsvp-page__marquee { overflow: hidden; padding: .72rem var(--page-gutter); background: var(--ink); color: var(--white); font-size: .61rem; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; white-space: nowrap; }
