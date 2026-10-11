@@ -11,7 +11,7 @@ import { ScrollReveal } from './ScrollReveal';
 const iconProps = { size: 19, weight: 'regular' as const, 'aria-hidden': true };
 const details = [
   { label: 'Dress code', title: 'Cream or beige', copy: 'A soft, celebratory palette to wear to lunch.', Icon: Sparkle },
-  { label: 'The afternoon', title: 'Lunch · games · surprises', copy: 'Come ready for a long lunch and a little fun.', Icon: ForkKnife },
+  { label: 'The afternoon', title: 'Lunch & games', copy: 'Come ready for a long lunch and a little fun.', Icon: ForkKnife },
   { label: 'Your reply', title: 'RSVP is a must', copy: 'Please reply either way, and choose your meal if you can join.', Icon: Ticket },
 ];
 

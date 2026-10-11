@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, type ReactNode } from 'react';
 
 const heroTargets = [
@@ -32,27 +30,26 @@ export function ScrollReveal({ children }: { children: ReactNode }) {
         entry.target.classList.add('is-revealed');
         currentObserver.unobserve(entry.target);
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    }, { threshold: 0.01, rootMargin: '0px 0px 0px 0px' });
 
     targets.forEach((target, index) => {
       target.setAttribute('data-reveal', '');
-      const isHeroTarget = target.closest('.hero-section') !== null;
-      const heroIndex = heroTargets.findIndex((selector) => target.matches(selector));
-      const delay = isHeroTarget
-        ? Math.max(heroIndex, 0) * 180
-        : (index % 3) * 110;
+      const heroIndex = target.closest('.hero-section')
+        ? heroTargets.findIndex((selector) => target.matches(selector))
+        : -1;
+      const delay = heroIndex >= 0 ? heroIndex * 180 : (index % 3) * 110;
       target.style.setProperty('--reveal-delay', `${delay}ms`);
       observer.observe(target);
     });
 
     const onMotionPreferenceChange = () => {
       if (!motionPreference.matches) return;
-      observer.disconnect();
-      targets.forEach((target) => target.classList.add('is-revealed'));
       document.documentElement.classList.remove('has-scroll-reveal');
+      targets.forEach((target) => target.classList.add('is-revealed'));
+      observer.disconnect();
     };
-    motionPreference.addEventListener('change', onMotionPreferenceChange);
 
+    motionPreference.addEventListener('change', onMotionPreferenceChange);
     return () => {
       observer.disconnect();
       motionPreference.removeEventListener('change', onMotionPreferenceChange);
@@ -60,5 +57,5 @@ export function ScrollReveal({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return children;
+  return <>{children}</>;
 }
