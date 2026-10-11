@@ -2,7 +2,13 @@
 
 import { useEffect, type ReactNode } from 'react';
 
+const heroTargets = [
+  '.hero-topline', '.hero-seal', '.hero-kicker', '.hero-invite', '.hero-celebrate',
+  '#hero-title', '.hero-occasion', '.hero-bottomline > *',
+];
+
 const motionTargets = [
+  ...heroTargets,
   '.letter-intro', '.personal-note', '.when-section .section-heading', '.date-card', '.map-panel',
   '.outfit-section .section-shell > div:first-child', '.outfit-preview', '.details-heading',
   '.detail-item', '.closing-content > *',
@@ -30,7 +36,12 @@ export function ScrollReveal({ children }: { children: ReactNode }) {
 
     targets.forEach((target, index) => {
       target.setAttribute('data-reveal', '');
-      target.style.setProperty('--reveal-delay', `${Math.min(index % 3, 2) * 110}ms`);
+      const isHeroTarget = target.closest('.hero-section') !== null;
+      const heroIndex = heroTargets.findIndex((selector) => target.matches(selector));
+      const delay = isHeroTarget
+        ? Math.max(heroIndex, 0) * 180
+        : (index % 3) * 110;
+      target.style.setProperty('--reveal-delay', `${delay}ms`);
       observer.observe(target);
     });
 

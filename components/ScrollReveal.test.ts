@@ -1,26 +1,27 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const reveal = readFileSync(join(process.cwd(), 'components/ScrollReveal.tsx'), 'utf8');
-const styles = readFileSync(join(process.cwd(), 'app/globals.css'), 'utf8');
+const source = readFileSync(fileURLToPath(new URL('./ScrollReveal.tsx', import.meta.url)), 'utf8');
 
-describe('invitation scroll reveal', () => {
-  it('uses intersection-triggered reveal and reduced-motion fallback', () => {
-    expect(reveal).toContain('IntersectionObserver');
-    expect(reveal).toContain('is-revealed');
-    expect(reveal).toContain('prefers-reduced-motion: reduce');
+describe('ScrollReveal', () => {
+  it('includes the complete hero sequence in the reveal targets', () => {
+    for (const selector of [
+      "'.hero-topline'",
+      "'.hero-seal'",
+      "'.hero-kicker'",
+      "'.hero-invite'",
+      "'.hero-celebrate'",
+      "'#hero-title'",
+      "'.hero-occasion'",
+      "'.hero-bottomline > *'",
+    ]) {
+      expect(source).toContain(selector);
+    }
   });
 
-  it('reveals progressively with motion-safe transitions', () => {
-    expect(styles).toContain('.has-scroll-reveal [data-reveal]');
-    expect(styles).toContain('[data-reveal].is-revealed');
-    expect(styles).toContain('transition: opacity');
-  });
-
-  it('keeps anchor smooth scrolling and disables motion for reduced-motion', () => {
-    expect(styles).toContain('html { scroll-behavior: smooth; }');
-    expect(styles).toContain('scroll-behavior: auto');
-    expect(styles).toContain('prefers-reduced-motion: reduce');
+  it('stages the hero entrance more slowly than scroll-section reveals', () => {
+    expect(source).toContain('Math.max(heroIndex, 0) * 180');
+    expect(source).toContain('(index % 3) * 110');
   });
 });

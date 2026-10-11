@@ -44,6 +44,6 @@ export const event: EventContent = {
     { label: 'Cream and beige outfit ideas', url: 'https://www.pinterest.com/ideas/cream-beige-outfit/894853851283/' },
     { label: 'Cream and beige outfit ideas for men', url: 'https://www.pinterest.com/ideas/cream-outfit-men/960657287556/' },
   ],
-  personalNote: "We've got good food, laughs, and a table with your name on it. Come celebrate with Nayla — she'd love to share this one with you.",
+  personalNote: "I'm turning seventeen, and I'd love to spend the afternoon with you. Join me for lunch, games, and a few surprises—having you there would make the day feel like mine.",
   activities: ['Lunch together', 'Games', 'And more surprises'],
 };
