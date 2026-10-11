@@ -17,7 +17,20 @@ describe('ScrollReveal', () => {
     expect(styles).toContain('[data-reveal].is-revealed');
     expect(styles).not.toContain('hero-reveal-ready');
     expect(styles).not.toContain('.has-scroll-reveal .hero-section [data-reveal]');
-    expect(styles).toContain('Hero content is always visible');
+    expect(styles).toContain('Hero content remains visible until its post-paint entrance begins.');
+  });
+
+  it('starts the hero entrance only after the invitation has painted', () => {
+    expect(invitation).toContain("useState(false)");
+    expect(invitation).toContain('requestAnimationFrame(() => {');
+    expect(invitation).toContain('window.setTimeout(() => setHeroReady(true), 150)');
+    expect(invitation).toContain("hero-section${heroReady ? ' hero-section--ready' : ''}");
+    expect(styles).toContain('.hero-section--ready .hero-topline');
+    expect(styles).toContain('opacity: 0');
+    expect(styles).toContain('translate3d(0, 24px, 0)');
+    expect(styles).toContain('.hero-section--ready .hero-seal');
+    expect(styles).toContain('rotate(12deg)');
+    expect(styles).toContain('1250ms cubic-bezier(.16, 1, .3, 1)');
   });
 
   it('keeps the invitation note in Nayla’s first-person voice without em dashes', () => {

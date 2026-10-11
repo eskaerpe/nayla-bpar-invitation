@@ -32,8 +32,25 @@ export function Invitation() {
   const target = event.startTime !== 'TIME_TBD' && event.timezone ? new Date(`${event.isoDate}T${event.startTime}${event.timezone}`) : null;
   const [showOutfit, setShowOutfit] = useState(false);
   const [mapFailed, setMapFailed] = useState(false);
+  const [heroReady, setHeroReady] = useState(false);
+
+  useEffect(() => {
+    let secondFrame: number | undefined;
+    let startDelay: number | undefined;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        startDelay = window.setTimeout(() => setHeroReady(true), 150);
+      });
+    });
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      if (secondFrame !== undefined) window.cancelAnimationFrame(secondFrame);
+      if (startDelay !== undefined) window.clearTimeout(startDelay);
+    };
+  }, []);
+
   return <ScrollReveal><main>
-      <section className="hero-section" aria-labelledby="hero-title"><div className="hero-marquee" aria-hidden="true"><div className="hero-marquee-track"><span>NAYLA’S SWEET SEVENTEEN · SATURDAY 17 OCTOBER 2026 · BANDUNG · </span><span>NAYLA’S SWEET SEVENTEEN · SATURDAY 17 OCTOBER 2026 · BANDUNG · </span></div></div>
+      <section className={`hero-section${heroReady ? ' hero-section--ready' : ''}`} aria-labelledby="hero-title"><div className="hero-marquee" aria-hidden="true"><div className="hero-marquee-track"><span>NAYLA’S SWEET SEVENTEEN · SATURDAY 17 OCTOBER 2026 · BANDUNG · </span><span>NAYLA’S SWEET SEVENTEEN · SATURDAY 17 OCTOBER 2026 · BANDUNG · </span></div></div>
       <div className="hero-frame"><div className="hero-topline"><span>A birthday invitation</span><span>Bandung · 2026</span></div><div className="hero-orbit hero-orbit--one" aria-hidden="true" /><div className="hero-orbit hero-orbit--two" aria-hidden="true" /><div className="hero-seal" aria-hidden="true"><span>chapter</span><strong>17</strong><span>with love</span></div>
         <div className="hero-copy"><p className="hero-kicker">Birthday Party <Sparkle {...iconProps} size={14} /></p><p className="hero-invite font-accent">you’re invited to</p><p className="hero-celebrate">celebrate</p><h1 id="hero-title">Nayla’s</h1><p className="hero-occasion"><span>Sweet Seventeen</span></p></div>
         <div className="hero-bottomline"><p><strong>Saturday, 17 October 2026</strong><span>13.00–16.00 WIB · Bandung</span></p><a href="#letter">Unfold your invitation <CaretRight size={17} weight="bold" /></a></div>
